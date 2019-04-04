@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rect_getter/rect_getter.dart';
 
 void main() => runApp(MyApp());
 
@@ -22,23 +23,54 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  GlobalKey rectGetterKey = RectGetter.createGlobalKey();
+  Rect rect;
 
   void _onTap() {
+    setState(() {
+      rect = RectGetter.getRectFromKey(rectGetterKey);
+    });
     Navigator.of(context).push(FadeRouteBuilder(page: NewPage()));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Fab overlay transition"),
-      ),
-      body: Center(
-        child: Text("This is first page")
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onTap,
-        child: Icon(Icons.mail_outline),
+    return Stack(
+      children: <Widget>[
+        Scaffold(
+          appBar: AppBar(
+            title: Text("Fab overlay transition"),
+          ),
+          body: Center(
+              child: Text("This is first page")
+          ),
+          floatingActionButton: RectGetter(
+              key: rectGetterKey,
+              child: FloatingActionButton(
+                onPressed: _onTap,
+                child: Icon(Icons.mail_outline),
+              )
+          ),
+        ),
+        _ripple(),
+      ],
+    );
+  }
+
+  Widget _ripple() {
+    if (rect == null) {
+      return Container();
+    }
+    return Positioned(
+      left: rect.left,
+      right: MediaQuery.of(context).size.width - rect.right,
+      top: rect.top,
+      bottom: MediaQuery.of(context).size.height - rect.bottom,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.blue,
+        ),
       ),
     );
   }
