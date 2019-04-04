@@ -23,6 +23,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final Duration animationDuration = Duration(milliseconds: 300);
+  final Duration delay = Duration(milliseconds: 300);
+
   GlobalKey rectGetterKey = RectGetter.createGlobalKey();
   Rect rect;
 
@@ -30,7 +33,17 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       rect = RectGetter.getRectFromKey(rectGetterKey);
     });
-    Navigator.of(context).push(FadeRouteBuilder(page: NewPage()));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        rect = rect.inflate(1.3 * MediaQuery.of(context).size.longestSide);
+      });
+      Future.delayed(animationDuration + delay, _goToNextPage);
+    });
+  }
+
+  void _goToNextPage() {
+    Navigator.of(context).push(FadeRouteBuilder(page: NewPage()))
+        .then((_) => setState(() => rect = null));
   }
 
   @override
