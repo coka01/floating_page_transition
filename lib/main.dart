@@ -74,7 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (rect == null) {
       return Container();
     }
-    return Positioned(
+    return AnimatedPositioned(
+      duration: animationDuration,
       left: rect.left,
       right: MediaQuery.of(context).size.width - rect.right,
       top: rect.top,
@@ -85,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.blue,
         ),
       ),
-    );
+    )
   }
 }
 
